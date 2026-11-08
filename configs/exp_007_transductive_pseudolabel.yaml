@@ -1,0 +1,36 @@
+experiment_id: "EXP_007"
+description: "Transductive Semi-Supervised Learning via High-Confidence Test Pseudo-Labeling"
+created_at: "2026-11-07 22:30:00"
+objective: "Leverage 5,000 unlabelled test rows to align decision boundaries with the test manifold using Low-Density Separation"
+
+dataset:
+  train_parquet: "feature_engineering_script/output/train_fe_v4.parquet"
+  test_parquet: "feature_engineering_script/output/test_fe_v4.parquet"
+  total_features: 46
+  cv_scheme: "Stratified 5-Fold with fixed fold assignment (data/cv_folds.parquet)"
+
+pseudo_labeling_parameters:
+  positive_threshold: 0.82
+  negative_threshold: 0.04
+  sample_weight_train: 1.0
+  sample_weight_pseudo: 0.40
+
+models:
+  - name: "XGB_Pseudo"
+    type: "xgboost"
+    params:
+      learning_rate: 0.03
+      max_depth: 6
+      subsample: 0.80
+      colsample_bytree: 0.70
+      min_child_weight: 8
+  - name: "RF_Pseudo"
+    type: "ranger_random_forest"
+    params:
+      num_trees: 300
+      mtry: 7
+      min_node_size: 15
+
+evaluation:
+  metric: "Balanced Accuracy & ROC-AUC"
+  nested_cv: true

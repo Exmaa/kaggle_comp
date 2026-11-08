@@ -1,0 +1,33 @@
+experiment:
+  id: EXP_001
+  name: "MVP_Vanilla_XGBoost"
+  date: "2026-11-04"
+  description: "Stratified 5-Fold CV baseline Vanilla XGBoost on 11 raw features X1-X11."
+
+data:
+  train_path: "data/training_data_tugas_praktikum_DataScience.parquet"
+  test_path: "data/testing_data_tugas_praktikum_DataScience.parquet"
+  cv_folds_path: "data/cv_folds.parquet"
+
+features:
+  raw: ["X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11"]
+  engineered: []
+
+model:
+  family: "xgboost"
+  params:
+    objective: "binary:logistic"
+    eval_metric: "auc"
+    max_depth: 4
+    eta: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+    nrounds: 500
+    early_stopping_rounds: 50
+    nthread: 4
+
+validation:
+  folds: 5
+  seed: 1581
+  metric: "balanced_accuracy"
+  threshold_rule: "nested_oof_optimal" # Mencari t* per fold

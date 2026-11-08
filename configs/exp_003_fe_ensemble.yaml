@@ -1,0 +1,56 @@
+experiment:
+  id: EXP_003
+  name: "FE_v2_MultiModel_Ensemble_and_Gate0_Probes"
+  date: "2026-11-06"
+  description: "Implementasi PRD v2 (S1-S8 & Gate 0): Feature Engineering domain telekomunikasi (F1-F6, 29 fitur), seleksi fitur, komparasi 4 keluarga model (XGBoost, Ranger RF, Ranger ExtraTrees, GLMNet), optimal ensemble blending, serta pembangkitan file probe Gate 0."
+
+data:
+  train_path: "data/training_data_tugas_praktikum_DataScience.parquet"
+  test_path: "data/testing_data_tugas_praktikum_DataScience.parquet"
+  cv_folds_path: "data/cv_folds.parquet"
+
+features:
+  raw: ["X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11"]
+  engineered_groups:
+    F1_exact_3m_counts: ["exact_3m_recharges", "exact_3m_regions", "is_integer_recharge"]
+    F2_recharge_ticket_size: ["total_arpu", "avg_nominal_per_recharge", "data_rev_per_recharge", "voice_rev_per_recharge", "recharge_per_region"]
+    F3_arpu_composition: ["share_rev_voice", "share_rev_sms", "share_rev_data"]
+    F4_unit_economics: ["avg_call_duration", "rev_per_call_min", "rev_per_call_freq", "rev_per_mb"]
+    F5_offnet_workhour: ["workhour_call_mins", "offnet_call_mins", "offnet_sms_rev"]
+    F6_segment_flags: ["is_zero_data", "flag_rounding_call", "flag_short_call", "flag_free_data"]
+
+models:
+  - name: "xgb_fe"
+    family: "xgboost"
+    params:
+      objective: "binary:logistic"
+      eval_metric: "auc"
+      max_depth: 6
+      learning_rate: 0.04
+      subsample: 0.80
+      colsample_bytree: 0.75
+      min_child_weight: 8
+      reg_lambda: 2.0
+      reg_alpha: 0.5
+  - name: "rf_fe"
+    family: "ranger"
+    params:
+      num.trees: 300
+      mtry: 6
+      min.node.size: 15
+      splitrule: "gini"
+  - name: "et_fe"
+    family: "ranger"
+    params:
+      num.trees: 300
+      mtry: 6
+      min.node.size: 15
+      splitrule: "extratrees"
+  - name: "glmnet_fe"
+    family: "glmnet"
+    params:
+      alpha: 0.5
+
+ensemble:
+  methods: ["weighted_prob_blend", "rank_average"]
+  threshold_rules: ["nested_oof_optimal", "prior_pi_01867", "default_050"]

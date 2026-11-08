@@ -1,0 +1,58 @@
+# Kebijakan Wajib Repositori: 100% Parquet-Only (Blokir Seluruh CSV)
+*.csv
+data/*.txt
+modeling_script/output/*.txt
+eda_script/output/*.txt
+feature_engineering_script/output/*.txt
+ledger/*.txt
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# R artifacts
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.rds
+*.Rds
+
+# Model / cache artifacts (optional large binaries)
+*.pkl
+*.joblib
+*.h5
+*.onnx
+catboost_info/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+*~
+*.swp
+.vscode/
+.idea/
+
+# Kredensial dan Token Sensitif (Zero-Leakage Policy - PRD-AUTO-01)
+.kaggle/
+kaggle.json
+*.pem
+*.key
+.env
+.env.*
+
+# Data Besar & Binary Sementara
+*.csv.zip
+*.tar.gz
+.kaggle_kernel_tmp/
+scratch/

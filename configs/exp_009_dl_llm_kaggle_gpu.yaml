@@ -1,0 +1,76 @@
+experiment_id: "EXP_009"
+name: "Tabular_Deep_Learning_and_LLM_Semantic_Ensemble_Kaggle_GPU"
+description: >
+  Integrasi Pretrained Transformer LLM Semantic Embeddings (BAAI/bge-small-en-v1.5 via reticulate)
+  dengan 2 arsitektur Deep Learning Tabular modern di R torch (PLR-FT-Transformer & TabResNet-GLU)
+  di atas 46 fitur domain FE v4 (termasuk monetary_polarity & dual-regime flags in-fold),
+  dieksekusi pada Kaggle Private R GPU Kernel (T4/P100) dengan pembagian fold identik (seed = 1581)
+  dan format artefak 100% Apache Parquet (.parquet).
+
+execution_environment:
+  target: "Kaggle Private R Notebook / Script Kernel (GPU ON, Internet ON)"
+  language: "R"
+  gpu_recommended: true
+  runner_script: "modeling_script/11_exp009_dl_llm_kaggle_gpu.R"
+  local_blender_script: "modeling_script/12_blend_exp008_exp009.R"
+
+data:
+  train_path: "data/training_data_tugas_praktikum_DataScience.parquet"
+  test_path: "data/testing_data_tugas_praktikum_DataScience.parquet"
+  cv_folds_path: "data/cv_folds.parquet"
+  fe_train_path: "feature_engineering_script/output/train_fe_v4.parquet"
+  fe_test_path: "feature_engineering_script/output/test_fe_v4.parquet"
+  drop_columns: ["ID"]
+  target_column: "Y"
+
+validation:
+  scheme: "StratifiedKFold"
+  n_splits: 5
+  seed: 1581
+  in_fold_transforms:
+    - "In-fold median reference for dual-regime flags (seg_atm_profile, seg_kiosk_profile)"
+    - "RankGauss (Empirical Quantile -> Standard Normal, fit strictly on train fold)"
+    - "Truncated SVD (384-d LLM Embedding -> 24 orthogonal components, fit strictly on train fold)"
+    - "Nested Out-Of-Fold Threshold Optimization + Empiric Vertex 13.34% Calibration"
+
+models:
+  llm_semantic_head:
+    backbone: "BAAI/bge-small-en-v1.5 (fallback: sentence-transformers/all-MiniLM-L6-v2)"
+    interface: "R reticulate + transformers (FP16 CUDA inference, VRAM freed post-extraction)"
+    serialization: "Domain-grounded telecom & banking behavioral narrative (deterministic, zero-leakage)"
+    classifier: "In-fold L2/ElasticNet Regularized Binomial GLMNet on [384-d LLM embeddings + 46 RankGauss FE v4 features]"
+
+  plr_ft_transformer:
+    framework: "R torch (CUDA)"
+    numerical_tokenizer: "Periodic-Linear-ReLU (PLR Fourier Embeddings, Gorishniy et al. NeurIPS 2022) on 46 FE v4 features"
+    d_token: 64
+    n_heads: 4
+    n_blocks: 3
+    attention_dropout: 0.15
+    ffn_dropout: 0.20
+    lr: 0.001
+    weight_decay: 0.0001
+    batch_size: 256
+    max_epochs: 32
+    early_stopping_patience: 6
+
+  tab_resnet_glu:
+    framework: "R torch (CUDA)"
+    architecture: "Tabular ResNet with Gated Linear Units (SwiGLU) + BatchNorm + Skip Connections"
+    d_hidden: 192
+    n_blocks: 3
+    dropout: 0.25
+    lr: 0.001
+    weight_decay: 0.0001
+    batch_size: 256
+    max_epochs: 32
+    early_stopping_patience: 6
+
+outputs_parquet_only:
+  oof_predictions: "modeling_script/output/oof_predictions_exp_009_dl_llm.parquet"
+  test_probabilities: "modeling_script/output/test_probabilities_exp_009_dl_llm.parquet"
+  benchmark_metrics: "modeling_script/output/exp_009_dl_llm_benchmark.parquet"
+  standalone_submission_opt: "modeling_script/output/submission_exp_009_dl_llm_opt.parquet"
+  standalone_submission_vtx: "modeling_script/output/submission_exp_009_dl_llm_vertex1334.parquet"
+  blended_super_vtx: "modeling_script/output/submission_exp_009_super_grand_master_vertex1334.parquet"
+  blended_super_opt: "modeling_script/output/submission_exp_009_super_grand_master_opt.parquet"

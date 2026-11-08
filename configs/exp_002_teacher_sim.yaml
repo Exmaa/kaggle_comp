@@ -1,0 +1,34 @@
+experiment:
+  id: EXP_002
+  name: "Teacher_Simulation_Validation"
+  date: "2026-11-05"
+  description: "Simulasi validasi keluarga Guru (RF, XGB, GLMnet, CART, Ensemble) terhadap model Murid untuk membuktikan hipotesis H2/H3 dan kestabilan threshold."
+
+data:
+  train_path: "data/training_data_tugas_praktikum_DataScience.parquet"
+  split_ratio: 0.70 # 70% Set A, 30% Set B (Simulated Test)
+  split_seed: 1581
+
+teachers:
+  - name: "RF"
+    type: "randomForest"
+    ntree: 150
+  - name: "XGB"
+    type: "xgboost"
+    max_depth: 5
+    eta: 0.1
+    nrounds: 120
+  - name: "GLMNET"
+    type: "glmnet"
+    alpha: 0.5
+  - name: "CART"
+    type: "rpart"
+    cp: 0.005
+  - name: "ENSEMBLE_AVG"
+    type: "prob_average"
+
+thresholds:
+  - name: "default_050"
+    value: 0.50
+  - name: "prior_pi"
+    value: 0.1867 # Prior kelas positif aktual
