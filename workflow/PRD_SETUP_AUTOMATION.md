@@ -2,7 +2,7 @@
 
 **Kode Dokumen:** `PRD-AUTO-01`  
 **Proyek:** `KAGGLE_AUTO_WIN` — Praktikum Sains Data (`STA1581`)  
-**Status:** DRAFT / Menunggu Kredensial Pengguna  
+**Status:** ACTIVE / Terhubung ke `https://github.com/Exmaa/kaggle_comp`  
 
 ---
 
@@ -115,8 +115,8 @@ Setelah seluruh kredensial terpasang, siklus kerja menjadi semi-otomatis hingga 
 
 ## 6. Formulir Checklist Kesiapan (Ready-to-Fill)
 
-- [ ] **Kaggle Token:** File `kaggle.json` sudah ditaruh di `C:\Users\eman\.kaggle\kaggle.json`.
-- [ ] **GitHub Login:** Perintah `gh auth login` sudah selesai dijalankan di PowerShell.
-- [ ] **GitHub Repo Remote:** Repositori lokal sudah terhubung dengan remote GitHub (`git remote -v`).
-- [ ] **GitHub Secrets:** `KAGGLE_USERNAME` dan `KAGGLE_KEY` sudah ditambahkan pada GitHub Secrets.
-- [ ] **Slug Kompetisi:** Informasi nama/slug kompetisi Kaggle yang tertera pada URL kompetisi.
+- [x] **Kaggle Token:** File `kaggle.json` sudah terkonfigurasi di lokal.
+- [x] **GitHub Login:** Perintah `gh auth login` sudah aktif (`Exmaa`).
+- [x] **GitHub Repo Remote:** Repositori lokal sudah terhubung dengan `https://github.com/Exmaa/kaggle_comp.git`.
+- [x] **GitHub Secrets:** `KAGGLE_USERNAME`, `KAGGLE_KEY`, `KAGGLE_COMPETITION`, dan `COMPETITION_SLUG` sudah ditambahkan pada GitHub Secrets.
+- [x] **Slug Kompetisi:** Informasi nama/slug kompetisi Kaggle sudah terkonfigurasi.
